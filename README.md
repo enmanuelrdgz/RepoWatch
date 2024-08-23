@@ -34,7 +34,7 @@ By default, this command shows the last 6 events in the user's activity.
 ```
 Customizing the Event Limit
 You can specify the number of events to display (up to 100) using the following command:
-
+```
 ```bash
 mvn exec:java -Dexec.mainClass="org.example.Main" -Dexec.args="<GitHub-username> --limit <number-of-events>"
 ```
