@@ -32,6 +32,7 @@ mvn exec:java -Dexec.mainClass="org.example.Main" -Dexec.args="<GitHub-username>
 By default, this command shows the last 6 events in the user's activity.
 
 Customizing the Event Limit
+
 You can specify the number of events to display (up to 100) using the following command:
 ```bash
 mvn exec:java -Dexec.mainClass="org.example.Main" -Dexec.args="<GitHub-username> --limit <number-of-events>"
@@ -49,3 +50,6 @@ Or with a custom event limit:
 
 ```batch
 repowatch <GitHub-username> --limit <number-of-events>
+```
+## Credits
+This project idea was provided by [roadmap.sh](https://roadmap.sh/projects/github-user-activity)
