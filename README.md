@@ -23,11 +23,12 @@
 3. Compile the project:
    ```bash
    mvn compile
-#Usage
+## Usage
 Running the Application
 You can run the application directly using Maven with the following command:
 ```bash
 mvn exec:java -Dexec.mainClass="org.example.Main" -Dexec.args="<GitHub-username>"
+```
 By default, this command shows the last 6 events in the user's activity.
 
 ```
