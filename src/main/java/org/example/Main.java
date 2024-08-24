@@ -1,13 +1,18 @@
 package org.example;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 import java.util.Scanner;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -48,81 +53,67 @@ public class Main {
         }
         while (true) {
             try {
-                System.out.println("Welcome to RepoWatch!");
+                try (FileReader fileReader = new FileReader("logo.txt");
+                     BufferedReader bufferedReader = new BufferedReader(fileReader)) {
+
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        System.out.println(line);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 System.out.println("Please wait while we fetch the data of the user...");
                 HttpResponse<String> response = HttpClient.newBuilder()
                         .build()
                         .send(fetchUserData(username, numberOfEventsToDisplay), HttpResponse.BodyHandlers.ofString());
+//                System.out.println(response.body());
                 if (response.statusCode() == 404) {
                     System.out.println("No user found with given username: " + username + ". Please enter a valid GitHub username:");
                     username = scanner.nextLine();
                 }
-
-//              System.out.println(response.body());
                 else if (response.statusCode() == 200) {
                     ObjectMapper objectMapper = new ObjectMapper();
-                    JsonNode rootNode = objectMapper.readTree(response.body());
-                    int pushEvents = 0;
-                    int createEvents = 0;
-                    int publicEvents = 0;
-                    int pullEvents = 0;
-                    int pullRequestReview = 0;
-                    int openIssues = 0;
-                    int commentIssues = 0;
-                    int deleteBranch = 0;
-                    int commentCommits = 0;
-                    int starRepo = 0;
-                    int memberEvent = 0;
+                    List<Event> eventList = objectMapper.readValue(response.body(), new TypeReference<List<Event>>() {});
 
-                    System.out.println("Here is the summary of the last " + numberOfEventsToDisplay + " events done by " + username + " :");
-                    for (JsonNode node : rootNode) {
-                        switch (node.get("type").asText()) {
+                    System.out.println("Here is the summary of the last " + eventList.size() + " events done by " + username + " :");
+                    for (Event event : eventList) {
+                        switch (event.getType()) {
                             case "PushEvent":
-                                pushEvents++;
-                                System.out.println("Pushed " + node.get("payload").get("commits").size() + " commits to " + node.get("repo").get("name").asText());
+                                System.out.println("Pushed " + event.getPayload().getCommits().size() + " commits to " + event.getRepo().getName());
                                 break;
                             case "CreateEvent":
-                                createEvents++;
-                                if (node.get("payload").get("ref_type").asText().equals("repository")) {
-                                    System.out.println("Created a new repository called " + node.get("repo").get("name").asText());
-                                } else if (node.get("payload").get("ref_type").asText().equals("branch")) {
-                                    System.out.println("Created a new branch called " + node.get("payload").get("ref").asText());
+                                if (event.getPayload().getRef_type().equals("repository")) {
+                                    System.out.println("Created a new repository called " + event.getRepo().getName());
+                                } else if (event.getPayload().getRef().equals("branch")) {
+                                    System.out.println("Created a new branch called " + event.getPayload().getRef());
                                 }
                                 break;
                             case "PublicEvent":
-                                publicEvents++;
-                                System.out.println("Made the repo " + node.get("repo").get("name").asText() + " public");
+                                System.out.println("Made the repo " + event.getRepo().getName() + " public");
                                 break;
                             case "PullRequestEvent":
-                                pullEvents++;
                                 System.out.println("Opened a pull request in " + " or " + "Merged a pull request in <repository_name>");
                                 break;
                             case "PullRequestReviewEvent":
-                                pullRequestReview++;
                                 break;
                             case "IssuesEvent":
-                                openIssues++;
-                                System.out.println(node.get("payload").get("action").asText().toUpperCase() + node.get("repo").get("name").asText());
+                                System.out.println(event.getPayload().getAction().toUpperCase() + event.getRepo().getName());
                                 break;
                             case "IssueCommentEvent":
-                                commentIssues++;
                                 break;
                             case "DeleteEvent":
-                                deleteBranch++;
                                 break;
                             case "CommentCommitEvent":
-                                commentCommits++;
                                 break;
                             case "WatchEvent":
-                                starRepo++;
-                                System.out.println("Starred " + node.get("repo").get("name").asText());
+                                System.out.println("Starred " + event.getRepo().getName());
                                 break;
                             case "MemberEvent":
-                                memberEvent++;
-                                if (node.get("payload").get("action").asText().equals("added")) {
-                                    System.out.println("Added " + node.get("payload").get("member").get("login").asText() + " to " + node.get("repo").get("name").asText() + " as a " + node.get("payload").get("member").get("type").asText());
+                                if (event.getPayload().getAction().equals("added")) {
+                                    System.out.println("Added " + event.getPayload().getMember().getLogin() + " to " + event.getRepo().getName() + " as a " + event.getPayload().getMember().getType());
                                 } else {
-                                    System.out.println("Removed " + node.get("payload").get("member").get("login").asText() + " from " + node.get("repo").get("name").asText());
+                                    System.out.println("Removed " + event.getPayload().getMember().getLogin() + " from " + event.getRepo().getName());
                                 }
                                 break;
                         }

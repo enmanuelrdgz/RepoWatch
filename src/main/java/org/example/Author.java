@@ -4,18 +4,18 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Repo {
-    private long id;
+public class Author {
+    private String email;
     private String name;
-    public Repo(@JsonProperty("id") long id, @JsonProperty("name") String name) {
-        this.id = id;
+    public Author(@JsonProperty("email") String email,@JsonProperty("name")  String name) {
+        this.email = email;
         this.name = name;
     }
-    public long getId() {
-        return id;
+    public String getEmail() {
+        return email;
     }
-    public void setId(long id) {
-        this.id = id;
+    public void setEmail(String email) {
+        this.email = email;
     }
     public String getName() {
         return name;
