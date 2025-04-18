@@ -1,14 +1,12 @@
 package org.example;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Scanner;
 
@@ -53,8 +51,8 @@ public class Main {
         }
         while (true) {
             try {
-                try (FileReader fileReader = new FileReader("logo.txt");
-                     BufferedReader bufferedReader = new BufferedReader(fileReader)) {
+                try (   InputStream inputStream = Main.class.getClassLoader().getResourceAsStream("Logo.txt");
+                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
 
                     String line;
                     while ((line = bufferedReader.readLine()) != null) {
