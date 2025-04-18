@@ -2,11 +2,13 @@ package org.example;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Data
 public class Payload {
     private List<Commit> commits;
     private RepoMember member;
@@ -19,35 +21,5 @@ public class Payload {
         this.ref = ref;
         this.ref_type = ref_type;
         this.commits = commits;
-    }
-    public List<Commit> getCommits() {
-        return commits;
-    }
-    public void setCommits(List<Commit> commits) {
-        this.commits = commits;
-    }
-    public RepoMember getMember() {
-        return member;
-    }
-    public void setMember(RepoMember member) {
-        this.member = member;
-    }
-    public String getAction() {
-        return action;
-    }
-    public void setAction(String action) {
-        this.action = action;
-    }
-    public String getRef() {
-        return ref;
-    }
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
-    public String getRef_type() {
-        return ref_type;
-    }
-    public void setRef_type(String ref_type) {
-        this.ref_type = ref_type;
     }
 }
